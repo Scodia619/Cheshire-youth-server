@@ -92,3 +92,77 @@ describe("Get all articles", ()=>{
         })
     })
 })
+
+describe("gets article based on commission", ()=>{
+    test("200 - gets an article based on the all articles based on commission", ()=> {
+        return request(app)
+        .get("/api/reports/cheshire")
+        .expect(200)
+        .then(({body: {reports}})=>{
+            expect(reports).toHaveLength(1)
+            reports.forEach(report => {
+                expect(report).toMatchObject({
+                    report_id: expect.any(Number),
+                    commission_name: "cheshire",
+                    body_experience: expect.any(String),
+                    body_improvement: expect.any(String),
+                    topic_name: expect.any(String),
+                })
+            })
+        })
+    })
+    test("404 - No commission", ()=> {
+        return request(app)
+        .get("/api/reports/banana")
+        .expect(404)
+        .then(({body})=>{
+            expect(body.msg).toBe("No commission found")
+        })
+    })
+    test("404 - Incorrect Data type for commission", ()=> {
+        return request(app)
+        .get("/api/reports/1")
+        .expect(400)
+        .then(({body})=>{
+            expect(body.msg).toBe("Incorrect data type for commission")
+        })
+    })
+    test("400 - No Records", ()=> {
+        return request(app)
+        .get("/api/reports/nottingham")
+        .expect(400)
+        .then(({body})=>{
+            expect(body.msg).toBe("No records for commission")
+        })
+    })
+})
+
+describe("Gets commission by name", ()=> {
+    test("200 - gets a commission and returns all data", ()=>{
+        return request(app)
+        .get("/api/commission/cheshire")
+        .expect(200)
+        .then(({body: {commission}})=> {
+            expect(commission).toMatchObject({
+                commission_id: expect.any(Number),
+                commission: expect("cheshire")
+            })
+        })
+    })
+    test("404 - No commission", ()=> {
+        return request(app)
+        .get("/api/commission/banana")
+        .expect(404)
+        .then(({body})=>{
+            expect(body.msg).toBe("No commission found")
+        })
+    })
+    test("404 - Incorrect Data type for commission", ()=> {
+        return request(app)
+        .get("/api/commission/1")
+        .expect(400)
+        .then(({body})=>{
+            expect(body.msg).toBe("Incorrect data type for commission")
+        })
+    })
+})

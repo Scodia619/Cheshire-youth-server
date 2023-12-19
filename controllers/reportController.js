@@ -41,3 +41,17 @@ exports.selectReports = async (req, res, next) => {
         console.log(err)
     }
 };
+
+exports.selectReportsByCommission = async (req, res, next) => {
+    const {commission} = req.params
+    try{
+        const reports = await prisma.reports.findMany({
+            where: {
+                commission_name: commission
+            }
+        })
+        res.status(200).send({reports})
+    }catch(err){
+        next(err)
+    }
+}
