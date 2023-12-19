@@ -11,7 +11,7 @@ describe('Post a new report to database', ()=> {
             body_improvement: "Make sure the police get the correct address"
         }
         return request(app)
-        .post("/api/report")
+        .post("/api/reports")
         .send(newPost)
         .expect(201)
         .then(({body: {report}})=>{
@@ -31,7 +31,7 @@ describe('Post a new report to database', ()=> {
             body_improvement: "Make sure the police get the correct address"
         }
         return request(app)
-        .post('/api/report')
+        .post('/api/reports')
         .send(newPost)
         .expect(400)
         .then(({body})=>{
@@ -46,7 +46,7 @@ describe('Post a new report to database', ()=> {
             body_improvement: "Make sure the police get the correct address"
         }
         return request(app)
-        .post('/api/report')
+        .post('/api/reports')
         .send(newPost)
         .expect(400)
         .then(({body})=>{
@@ -61,11 +61,18 @@ describe('Post a new report to database', ()=> {
             body_improvement: "Make sure the police get the correct address"
         }
         return request(app)
-        .post('/api/report')
+        .post('/api/reports')
         .send(newPost)
         .expect(400)
         .then(({body})=>{
             expect(body.msg).toBe("Bad Request - Data Needed or Topic / Commission doesnt exist")
         })
+    })
+})
+
+describe("Get all articles", ()=>{
+    test("200: gets all the articles", ()=> {
+        return request(app)
+        .get("/api/reports")
     })
 })
