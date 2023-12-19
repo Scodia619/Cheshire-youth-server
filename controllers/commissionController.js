@@ -1,6 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
+//Reject on Not Found Error
 exports.selectCommissionByName = async (req, res, next) => {
     const {commission_name} = req.params
     try{
