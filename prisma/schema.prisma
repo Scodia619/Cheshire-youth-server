@@ -1,0 +1,31 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Reports {
+  report_id        Int        @id @default(autoincrement())
+  commission       Commission @relation(fields: [commission_name], references: [commission])
+  commission_name  String
+  body_experience  String
+  body_improvement String
+  topic            Topic      @relation(fields: [topic_name], references: [topic])
+  topic_name       String
+}
+
+model Commission {
+  commission_id Int       @id @default(autoincrement())
+  commission    String    @unique
+  Reports       Reports[]
+}
+
+model Topic {
+  topic_id          Int       @id @default(autoincrement())
+  topic             String    @unique
+  topic_description String
+  Reports           Reports[]
+}
