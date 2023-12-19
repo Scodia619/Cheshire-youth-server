@@ -2,6 +2,9 @@ const app = require("../app")
 const request = require('supertest')
 const { expect } = require("@jest/globals");
 
+const seed = require("../prisma/seed")
+beforeEach(() => seed());
+
 describe('Post a new report to database', ()=> {
     test('201 - creates the report',()=>{
         const newPost = {
@@ -74,5 +77,18 @@ describe("Get all articles", ()=>{
     test("200: gets all the articles", ()=> {
         return request(app)
         .get("/api/reports")
+        .expect(200)
+        .then(({body: {reports}})=> {
+            expect(reports).toHaveLength(2)
+            reports.forEach(report => {
+                expect(report).toMatchObject({
+                    report_id: expect.any(Number),
+                    commission_name: expect.any(String),
+                    body_experience: expect.any(String),
+                    body_improvement: expect.any(String),
+                    topic_name: expect.any(String),
+                  });
+            })
+        })
     })
 })
