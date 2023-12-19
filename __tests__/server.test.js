@@ -21,7 +21,6 @@ describe('Post a new report to database', ()=> {
                 body_experience: 'The police raided my house and arrested my mum for drugs but got the wrong house',
                 body_improvement: 'Make sure the police get the correct address',
                 topic_name: 'relationships with the police',
-                // Add more expectations based on the actual structure of your 'report' object
               });
         })
     })

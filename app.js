@@ -11,6 +11,10 @@ app.post("/api/report", async (req, res, next) => {
   const { commission_name, body_experience, body_improvement, topic_name } =
     req.body;
 
+    if (!commission_name || !body_experience || !body_improvement || !topic_name) {
+      return res.status(400).json({ msg: "Bad Request - Data Needed or Topic / Commission doesnt exist" });
+    }
+
   try {
     const report = await prisma.reports.create({
       data: {
