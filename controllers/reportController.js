@@ -52,6 +52,18 @@ exports.selectReportsByCommission = async (req, res, next) => {
             commission_name: commission,
         },
     });
+
+    if(reports.length === 0){
+      const commissionDetails = await selectCommissionByName(req, res, next)
+      console.log(commissionDetails)
+      if (commissionDetails && commissionDetails.commission) {
+        console.log("no data")
+        return res.status(404).json({reports});
+    } else if (commissionDetails.error) {
+        console.log(commissionDetails.error);
+        throw commissionDetails.error;
+    }
+    }
         res.status(200).send({reports})
     }catch(err){
         next(err)

@@ -119,7 +119,7 @@ describe("gets reports based on commission", ()=>{
             expect(body.msg).toBe("No commission found")
         })
     })
-    test("404 - Incorrect Data type for commission", ()=> {
+    test("400 - Incorrect Data type for commission", ()=> {
         return request(app)
         .get("/api/reports/1")
         .expect(400)
