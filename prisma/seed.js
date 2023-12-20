@@ -36,6 +36,13 @@ const seed = async () => {
           "Have more staff trained around the stop and search so they can better improve the experience for the public",
         topic_name: "relationships with the police",
     },
+    {
+      commission_name: "cheshire",
+      body_experience: "I got stabbed by a person on my college course",
+      body_improvement:
+        "Have more presence on college grounds as its more children that carry knives",
+      topic_name: "knife crime",
+  },
 ]
   });
 };

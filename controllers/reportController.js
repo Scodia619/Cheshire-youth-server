@@ -1,5 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const getCommissionDetails = require("../utils/getCommissionDetails");
+const getTopicDetails = require("../utils/getTopicDetails");
 const prisma = new PrismaClient();
 
 exports.postReport = async (req, res, next) => {
@@ -43,20 +44,33 @@ exports.selectReports = async (req, res, next) => {
 
 exports.selectReportsByCommission = async (req, res, next) => {
   const { commission } = req.params;
+  const {topic} = req.query
+  let query = {};
+  if(topic){
+    query = {where: {
+      commission_name: commission,
+      topic_name: topic
+    }}
+  }else{
+    query = {where: {
+      commission_name: commission,
+    }}
+  }
 
   try {
-    const reports = await prisma.reports.findMany({
-      where: {
-        commission_name: commission,
-      },
-    });
+    const reports = await prisma.reports.findMany(query);
 
     if (reports.length === 0) {
       // Fetch commission details using selectCommissionByName function
       const commissionDetails = await getCommissionDetails(commission);
+      if(topic){
+        const topicDetails = await getTopicDetails(topic)
+        if(topicDetails.error && topic){
+          throw topicDetails.error
+        }
+      }
 
       if (commissionDetails.error) {
-        console.log(commissionDetails.error);
         throw commissionDetails.error;
       }
 
