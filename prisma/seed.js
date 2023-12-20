@@ -18,7 +18,7 @@ const seed = async () => {
   });
 
   await prisma.commission.createMany({
-    data: [{ commission: "cheshire" }, { commission: "cumbria" }],
+    data: [{ commission: "cheshire" }, { commission: "cumbria" }, {commission: "nottingham"}],
   });
 
   await prisma.reports.createMany({

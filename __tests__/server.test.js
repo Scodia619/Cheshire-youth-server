@@ -58,7 +58,7 @@ describe('Post a new report to database', ()=> {
     })
     test('400 - No Commission', ()=>{
         const newPost = {
-            commission_name: "nottingham",
+            commission_name: "london",
             topic_name: "relationships with the police",
             body_experience: "The police raided my house and arrested my mum for drugs but got the wrong house",
             body_improvement: "Make sure the police get the correct address"
@@ -73,8 +73,8 @@ describe('Post a new report to database', ()=> {
     })
 })
 
-describe("Get all articles", ()=>{
-    test("200: gets all the articles", ()=> {
+describe("Get all reports", ()=>{
+    test("200: gets all the reports", ()=> {
         return request(app)
         .get("/api/reports")
         .expect(200)
@@ -93,7 +93,7 @@ describe("Get all articles", ()=>{
     })
 })
 
-describe("gets article based on commission", ()=>{
+describe("gets reports based on commission", ()=>{
     test("200 - gets an article based on the all articles based on commission", ()=> {
         return request(app)
         .get("/api/reports/cheshire")
@@ -127,12 +127,12 @@ describe("gets article based on commission", ()=>{
             expect(body.msg).toBe("Incorrect data type for commission")
         })
     })
-    test("400 - No Records", ()=> {
+    test("200 - No Records", ()=> {
         return request(app)
         .get("/api/reports/nottingham")
-        .expect(400)
-        .then(({body})=>{
-            expect(body.msg).toBe("No records for commission")
+        .expect(200)
+        .then(({body: {reports}})=>{
+            expect(reports).toEqual([])
         })
     })
 })
@@ -145,7 +145,7 @@ describe("Gets commission by name", ()=> {
         .then(({body: {commission}})=> {
             expect(commission).toMatchObject({
                 commission_id: expect.any(Number),
-                commission: expect("cheshire")
+                commission: "cheshire"
             })
         })
     })
