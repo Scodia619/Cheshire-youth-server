@@ -1,5 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
-const { selectCommissionByName } = require("./commissionController");
+const getCommissionDetails = require("../utils/getCommissionDetails");
 const prisma = new PrismaClient();
 
 exports.postReport = async (req, res, next) => {
@@ -12,11 +12,9 @@ exports.postReport = async (req, res, next) => {
     !body_improvement ||
     !topic_name
   ) {
-    return res
-      .status(400)
-      .json({
-        msg: "Bad Request - Data Needed or Topic / Commission doesnt exist",
-      });
+    return res.status(400).json({
+      msg: "Bad Request - Data Needed or Topic / Commission doesnt exist",
+    });
   }
 
   try {
@@ -35,37 +33,38 @@ exports.postReport = async (req, res, next) => {
 };
 
 exports.selectReports = async (req, res, next) => {
-    try{
-        const reports = await prisma.reports.findMany()
-        res.status(200).json({reports})
-    }catch(err){
-        console.log(err)
-    }
+  try {
+    const reports = await prisma.reports.findMany();
+    res.status(200).json({ reports });
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 exports.selectReportsByCommission = async (req, res, next) => {
-    const {commission} = req.params
+  const { commission } = req.params;
 
-    try{
-      const reports = await prisma.reports.findMany({
-        where: {
-            commission_name: commission,
-        },
+  try {
+    const reports = await prisma.reports.findMany({
+      where: {
+        commission_name: commission,
+      },
     });
 
-    if(reports.length === 0){
-      const commissionDetails = await selectCommissionByName(req, res, next)
-      console.log(commissionDetails)
-      if (commissionDetails && commissionDetails.commission) {
-        console.log("no data")
-        return res.status(404).json({reports});
-    } else if (commissionDetails.error) {
+    if (reports.length === 0) {
+      // Fetch commission details using selectCommissionByName function
+      const commissionDetails = await getCommissionDetails(commission);
+
+      if (commissionDetails.error) {
         console.log(commissionDetails.error);
         throw commissionDetails.error;
+      }
+
+      // Check if commission details are found but no reports exist
+        return res.status(200).json({ reports: [] });
     }
-    }
-        res.status(200).send({reports})
-    }catch(err){
-        next(err)
-    }
-}
+    res.status(200).json({ reports });
+  } catch (err) {
+    next(err);
+  }
+};
