@@ -1,3 +1,5 @@
+const cycImage = 'https://ibb.co/Y2CHT0j'
+
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
@@ -18,7 +20,7 @@ const seed = async () => {
   });
 
   await prisma.commission.createMany({
-    data: [{ commission: "cheshire" }, { commission: "cumbria" }, {commission: "nottingham"}],
+    data: [{ commission: "cheshire", commission_image: cycImage }, { commission: "cumbria" , commission_image: cycImage}, {commission: "nottingham", commission_image: cycImage}],
   });
 
   await prisma.reports.createMany({

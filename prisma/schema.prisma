@@ -21,6 +21,7 @@ model Commission {
   commission_id Int       @id @default(autoincrement())
   commission    String    @unique
   Reports       Reports[]
+  commission_image String
 }
 
 model Topic {
