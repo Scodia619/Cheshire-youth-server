@@ -29,3 +29,12 @@ exports.selectCommissionByName = async (req, res, next) => {
         next(err)
     }
 }
+
+exports.selectAllCommissions = async (req, res, next) => {
+    try{
+        const commissions = await prisma.commission.findMany()
+        res.status(200).send({commissions})
+    }catch(err){
+        next()
+    }
+}

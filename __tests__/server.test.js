@@ -222,3 +222,14 @@ describe("Adding Topic query for commission reports", () => {
     })
   })
 });
+
+describe('gets all commissions', ()=>{
+    test('200 - gets all commissions',()=>{
+        return request(app)
+        .get('/api/commission')
+        .expect(200)
+        .then(({body: {commissions}})=>{
+            expect(commissions).toHaveLength(3)
+        })
+    })
+})
