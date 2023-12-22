@@ -8,7 +8,7 @@ beforeEach(() => seed());
 describe("Post a new report to database", () => {
   test("201 - creates the report", () => {
     const newPost = {
-      commission_name: "cheshire",
+      commission_name: "Cheshire",
       topic_name: "relationships with the police",
       body_experience:
         "The police raided my house and arrested my mum for drugs but got the wrong house",
@@ -21,7 +21,7 @@ describe("Post a new report to database", () => {
       .then(({ body: { report } }) => {
         expect(report).toMatchObject({
           report_id: expect.any(Number),
-          commission_name: "cheshire",
+          commission_name: "Cheshire",
           body_experience:
             "The police raided my house and arrested my mum for drugs but got the wrong house",
           body_improvement: "Make sure the police get the correct address",
@@ -48,7 +48,7 @@ describe("Post a new report to database", () => {
   });
   test("400 - No Topic", () => {
     const newPost = {
-      commission_name: "cheshire",
+      commission_name: "Cheshire",
       topic_name: "Mental Health",
       body_experience:
         "The police raided my house and arrested my mum for drugs but got the wrong house",
@@ -107,14 +107,14 @@ describe("Get all reports", () => {
 describe("gets reports based on commission", () => {
   test("200 - gets an article based on the all articles based on commission", () => {
     return request(app)
-      .get("/api/reports/cheshire")
+      .get("/api/reports/Cheshire")
       .expect(200)
       .then(({ body: { reports } }) => {
         expect(reports).toHaveLength(2);
         reports.forEach((report) => {
           expect(report).toMatchObject({
             report_id: expect.any(Number),
-            commission_name: "cheshire",
+            commission_name: "Cheshire",
             body_experience: expect.any(String),
             body_improvement: expect.any(String),
             topic_name: expect.any(String),
@@ -140,7 +140,7 @@ describe("gets reports based on commission", () => {
   });
   test("200 - No Records", () => {
     return request(app)
-      .get("/api/reports/nottingham")
+      .get("/api/reports/Nottingham")
       .expect(200)
       .then(({ body: { reports } }) => {
         expect(reports).toEqual([]);
@@ -151,12 +151,12 @@ describe("gets reports based on commission", () => {
 describe("Gets commission by name", () => {
   test("200 - gets a commission and returns all data", () => {
     return request(app)
-      .get("/api/commission/cheshire")
+      .get("/api/commission/Cheshire")
       .expect(200)
       .then(({ body: { commission } }) => {
         expect(commission).toMatchObject({
           commission_id: expect.any(Number),
-          commission: "cheshire",
+          commission: "Cheshire",
         });
       });
   });
@@ -181,14 +181,14 @@ describe("Gets commission by name", () => {
 describe("Adding Topic query for commission reports", () => {
   test("200 - only gets the topic of query", () => {
     return request(app)
-      .get("/api/reports/cheshire?topic=knife crime")
+      .get("/api/reports/Cheshire?topic=knife crime")
       .expect(200)
       .then(({ body: { reports } }) => {
         expect(reports).toHaveLength(1);
         reports.forEach((report) => {
           expect(report).toMatchObject({
             report_id: expect.any(Number),
-            commission_name: "cheshire",
+            commission_name: "Cheshire",
             body_experience: "I got stabbed by a person on my college course",
             body_improvement:
               "Have more presence on college grounds as its more children that carry knives",
@@ -199,7 +199,7 @@ describe("Adding Topic query for commission reports", () => {
   });
   test("404 - Topic doesnt exist", ()=> {
     return request(app)
-    .get("/api/reports/cheshire?topic=mental health")
+    .get("/api/reports/Cheshire?topic=mental health")
     .expect(404)
     .then(({body})=>{
         expect(body.msg).toBe("No Topic Found")
@@ -207,7 +207,7 @@ describe("Adding Topic query for commission reports", () => {
   })
   test("400 - Incorrect Data Type", ()=> {
     return request(app)
-    .get("/api/reports/cheshire?topic=1")
+    .get("/api/reports/Cheshire?topic=1")
     .expect(400)
     .then(({body})=>{
         expect(body.msg).toBe("Incorrect Data Type")
@@ -215,7 +215,7 @@ describe("Adding Topic query for commission reports", () => {
   })
   test("200 - No records returns an empty array", ()=>{
     return request(app)
-    .get("/api/reports/cumbria?topic=relationships with the police")
+    .get("/api/reports/Cumbria?topic=relationships with the police")
     .expect(200)
     .then(({body: {reports}})=> {
         expect(reports).toEqual([])

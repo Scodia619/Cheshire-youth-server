@@ -1,4 +1,4 @@
-const cycImage = 'https://ibb.co/Y2CHT0j'
+const cycImage ="https://i.ibb.co/zsMqH6f/Cheshire-Youth-Commission-2023.jpg"
 
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
@@ -7,6 +7,11 @@ const seed = async () => {
   await prisma.reports.deleteMany();
   await prisma.topic.deleteMany();
   await prisma.commission.deleteMany();
+  await prisma.users.deleteMany();
+
+  await prisma.users.create({
+    data: {username: 'scodia619', password: '1234'}
+  })
 
   await prisma.topic.createMany({
     data: [
@@ -20,26 +25,26 @@ const seed = async () => {
   });
 
   await prisma.commission.createMany({
-    data: [{ commission: "cheshire", commission_image: cycImage }, { commission: "cumbria" , commission_image: cycImage}, {commission: "nottingham", commission_image: cycImage}],
+    data: [{ commission: "Cheshire", commission_image: cycImage }, { commission: "Cumbria" , commission_image: cycImage}, {commission: "Nottingham", commission_image: cycImage}],
   });
 
   await prisma.reports.createMany({
     data: [{
-        commission_name: "cumbria",
+        commission_name: "Cumbria",
         body_experience: "I got stabbed by a person on my college course",
         body_improvement:
           "Have more presence on college grounds as its more children that carry knives",
         topic_name: "knife crime",
     },
     {
-        commission_name: "cheshire",
+        commission_name: "Cheshire",
         body_experience: "Police searched me without probable cause and didnt inform me of any rights",
         body_improvement:
           "Have more staff trained around the stop and search so they can better improve the experience for the public",
         topic_name: "relationships with the police",
     },
     {
-      commission_name: "cheshire",
+      commission_name: "Cheshire",
       body_experience: "I got stabbed by a person on my college course",
       body_improvement:
         "Have more presence on college grounds as its more children that carry knives",

@@ -30,3 +30,9 @@ model Topic {
   topic_description String
   Reports           Reports[]
 }
+
+model Users {
+  user_id Int @id @default(autoincrement())
+  username String @unique
+  password String
+}
