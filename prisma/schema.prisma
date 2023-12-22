@@ -22,6 +22,7 @@ model Commission {
   commission    String    @unique
   Reports       Reports[]
   commission_image String
+  commissions CommissionUser[]
 }
 
 model Topic {
@@ -36,4 +37,16 @@ model Users {
   username String @unique
   password String
   isAdmin Boolean @default(false)
+  commissions CommissionUser[]
+}
+
+
+model CommissionUser {
+  id           Int        @id @default(autoincrement())
+  userId       Int
+  commissionId Int
+  user         Users      @relation(fields: [userId], references: [user_id])
+  commission   Commission @relation(fields: [commissionId], references: [commission_id])
+
+  @@unique([userId, commissionId])
 }

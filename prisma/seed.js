@@ -6,12 +6,14 @@ const prisma = new PrismaClient();
 const seed = async () => {
   await prisma.reports.deleteMany();
   await prisma.topic.deleteMany();
+  await prisma.commissionUser.deleteMany();
   await prisma.commission.deleteMany();
   await prisma.users.deleteMany();
   await prisma.$executeRaw`TRUNCATE TABLE "Topic" RESTART IDENTITY CASCADE`;
   await prisma.$executeRaw`TRUNCATE TABLE "Commission" RESTART IDENTITY CASCADE`;
   await prisma.$executeRaw`TRUNCATE TABLE "Reports" RESTART IDENTITY`;
-  await prisma.$executeRaw`TRUNCATE TABLE "Users" RESTART IDENTITY`;
+  await prisma.$executeRaw`TRUNCATE TABLE "Users" RESTART IDENTITY CASCADE`;
+  await prisma.$executeRaw`TRUNCATE TABLE "CommissionUser" RESTART IDENTITY CASCADE`;
 
   await prisma.users.create({
     data: {username: 'scodia619', password: '1234', isAdmin: true}
@@ -31,6 +33,10 @@ const seed = async () => {
   await prisma.commission.createMany({
     data: [{ commission: "Cheshire", commission_image: cycImage }, { commission: "Cumbria" , commission_image: cycImage}, {commission: "Nottingham", commission_image: cycImage}],
   });
+
+  await prisma.commissionUser.create({
+    data: {userId: 1, commissionId: 1}
+  })
 
   await prisma.reports.createMany({
     data: [{

@@ -247,6 +247,7 @@ describe('logging in a user', ()=>{
     .then(({body: {user}})=>{
       expect(user.username).toBe('scodia619')
       expect(user.password).toBe('1234')
+      expect(user.isAdmin).toEqual(true)
     })
   })
   test('400 - No username', ()=>{
@@ -273,6 +274,29 @@ describe('logging in a user', ()=>{
     .expect(400)
     .then(({body})=>{
       expect(body.msg).toBe('Invalid Password')
+    })
+  })
+})
+
+describe("Get all commissions based on a user", ()=>{
+  test("200 - gets all users", ()=>{
+    return request(app)
+    .get("/api/commission/user/1")
+    .expect(200)
+    .then(({body: {commissions}})=>{
+      expect(commissions).toHaveLength(1)
+      commissions.forEach(commission => {
+        expect(commission.userId).toBe(1)
+        expect(commission.commissionId).toBe(1)
+      })
+    })
+  })
+  test("400 - wrong data type for user", ()=>{
+    return request(app)
+    .get("/api/commission/user/banana")
+    .expect(400)
+    .then(({body})=>{
+      expect(body.msg).toBe("Invalid Data Type")
     })
   })
 })

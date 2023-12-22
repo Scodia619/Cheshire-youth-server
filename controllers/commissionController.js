@@ -38,3 +38,31 @@ exports.selectAllCommissions = async (req, res, next) => {
         next()
     }
 }
+
+exports.getCommissionByUser = async (req, res, next) => {
+    try{
+        const { user_id } = req.params;
+
+        const parsedId = parseInt(user_id)
+
+        if (isNaN(parsedId)) {
+            const error = new Error();
+            error.status = 400;
+            error.msg = "Invalid Data Type"
+            throw error;
+        }
+
+        const commissions = await prisma.commissionUser.findMany({
+            where: {
+              userId: parsedId // Use the specific user's ID here
+            },
+            include: {
+              commission: true // Include the commission details
+            }
+          });
+
+        res.status(200).send({commissions})
+    }catch(err){
+        next(err)
+    }
+}
