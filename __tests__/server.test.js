@@ -233,3 +233,46 @@ describe('gets all commissions', ()=>{
         })
     })
 })
+
+describe('logging in a user', ()=>{
+  test('200 - gets the correct user', ()=>{
+    const user = {
+      username: 'scodia619',
+      password: '1234'
+    }
+    return request(app)
+    .post('/api/users/login')
+    .send(user)
+    .expect(200)
+    .then(({body: {user}})=>{
+      expect(user.username).toBe('scodia619')
+      expect(user.password).toBe('1234')
+    })
+  })
+  test('400 - No username', ()=>{
+    const user = {
+      username: 'andy123',
+      password: '1234'
+    }
+    return request(app)
+    .post('/api/users/login')
+    .send(user)
+    .expect(400)
+    .then(({body})=>{
+      expect(body.msg).toBe('Invalid Username')
+    })
+  })
+  test('400 -Invalid Password', ()=> {
+    const user = {
+      username: 'scodia619',
+      password: '2134'
+    }
+    return request(app)
+    .post('/api/users/login')
+    .send(user)
+    .expect(400)
+    .then(({body})=>{
+      expect(body.msg).toBe('Invalid Password')
+    })
+  })
+})
