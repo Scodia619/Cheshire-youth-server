@@ -8,9 +8,13 @@ const seed = async () => {
   await prisma.topic.deleteMany();
   await prisma.commission.deleteMany();
   await prisma.users.deleteMany();
+  await prisma.$executeRaw`TRUNCATE TABLE "Topic" RESTART IDENTITY CASCADE`;
+  await prisma.$executeRaw`TRUNCATE TABLE "Commission" RESTART IDENTITY CASCADE`;
+  await prisma.$executeRaw`TRUNCATE TABLE "Reports" RESTART IDENTITY`;
+  await prisma.$executeRaw`TRUNCATE TABLE "Users" RESTART IDENTITY`;
 
   await prisma.users.create({
-    data: {username: 'scodia619', password: '1234'}
+    data: {username: 'scodia619', password: '1234', isAdmin: true}
   })
 
   await prisma.topic.createMany({
