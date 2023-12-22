@@ -284,10 +284,12 @@ describe("Get all commissions based on a user", ()=>{
     .get("/api/commission/user/1")
     .expect(200)
     .then(({body: {commissions}})=>{
-      expect(commissions).toHaveLength(1)
+      expect(commissions).toHaveLength(2)
       commissions.forEach(commission => {
-        expect(commission.userId).toBe(1)
-        expect(commission.commissionId).toBe(1)
+        expect(commission).toMatchObject({
+          userId: 1,
+          commissionId: expect.any(Number) 
+        })
       })
     })
   })

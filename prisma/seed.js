@@ -34,8 +34,8 @@ const seed = async () => {
     data: [{ commission: "Cheshire", commission_image: cycImage }, { commission: "Cumbria" , commission_image: cycImage}, {commission: "Nottingham", commission_image: cycImage}],
   });
 
-  await prisma.commissionUser.create({
-    data: {userId: 1, commissionId: 1}
+  await prisma.commissionUser.createMany({
+    data: [{userId: 1, commissionId: 1}, {userId: 1, commissionId: 2}]
   })
 
   await prisma.reports.createMany({
