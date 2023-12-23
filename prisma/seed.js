@@ -4,16 +4,12 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const seed = async () => {
-  await prisma.reports.deleteMany();
-  await prisma.topic.deleteMany();
-  await prisma.commissionUser.deleteMany();
-  await prisma.commission.deleteMany();
-  await prisma.users.deleteMany();
   await prisma.$executeRaw`TRUNCATE TABLE "Topic" RESTART IDENTITY CASCADE`;
   await prisma.$executeRaw`TRUNCATE TABLE "Commission" RESTART IDENTITY CASCADE`;
   await prisma.$executeRaw`TRUNCATE TABLE "Reports" RESTART IDENTITY`;
   await prisma.$executeRaw`TRUNCATE TABLE "Users" RESTART IDENTITY CASCADE`;
   await prisma.$executeRaw`TRUNCATE TABLE "CommissionUser" RESTART IDENTITY CASCADE`;
+  await prisma.$executeRaw`TRUNCATE TABLE "CommissionTopics" RESTART IDENTITY CASCADE`;
 
   await prisma.users.create({
     data: {username: 'scodia619', password: '1234', isAdmin: true}
@@ -36,6 +32,10 @@ const seed = async () => {
 
   await prisma.commissionUser.createMany({
     data: [{userId: 1, commissionId: 1}, {userId: 1, commissionId: 2}]
+  })
+
+  await prisma.commissionTopics.createMany({
+    data: [{commissionId: 1, topicId: 1}, {commissionId: 1, topicId: 2}]
   })
 
   await prisma.reports.createMany({

@@ -23,6 +23,7 @@ model Commission {
   Reports       Reports[]
   commission_image String
   commissions CommissionUser[]
+  topics CommissionTopics[]
 }
 
 model Topic {
@@ -30,6 +31,7 @@ model Topic {
   topic             String    @unique
   topic_description String
   Reports           Reports[]
+  topics CommissionTopics[]
 }
 
 model Users {
@@ -49,4 +51,13 @@ model CommissionUser {
   commission   Commission @relation(fields: [commissionId], references: [commission_id])
 
   @@unique([userId, commissionId])
+}
+
+model CommissionTopics {
+  id Int @id @default(autoincrement())
+  commissionId Int
+  topicId Int
+  commission Commission @relation(fields: [commissionId], references: [commission_id])
+  topic Topic @relation(fields: [topicId], references: [topic_id])
+  @@unique([topicId, commissionId])
 }

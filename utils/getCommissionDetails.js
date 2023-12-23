@@ -1,10 +1,10 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-const getCommissionDetails = async (commission) => {
+const getCommissionDetails = async (commission_name) => {
     try{
 
-        if (!isNaN(parseInt(commission))) {
+        if (!isNaN(parseInt(commission_name))) {
             const error = new Error();
             error.code = "INVALID_DATA";
             error.status = 400
@@ -14,12 +14,14 @@ const getCommissionDetails = async (commission) => {
 
         const commissionData = await prisma.commission.findUnique({
             where: {
-                commission: commission
+                commission: commission_name
             },
         })
         if (!commissionData) {
-            const error = new Error("No Commission Found");
-            error.code = "P2025"; // Custom error code
+            const error = new Error();
+            error.code = 'NO_COMISSION'
+            error.msg = "No Commission Found"
+            error.status = 400
             throw error; // Throw the custom error
           }
           return commissionData

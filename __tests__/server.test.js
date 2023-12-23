@@ -125,9 +125,9 @@ describe("gets reports based on commission", () => {
   test("404 - No commission", () => {
     return request(app)
       .get("/api/reports/banana")
-      .expect(404)
+      .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("No commission found");
+        expect(body.msg).toBe("No Commission Found");
       });
   });
   test("400 - Incorrect Data type for commission", () => {
@@ -299,6 +299,47 @@ describe("Get all commissions based on a user", ()=>{
     .expect(400)
     .then(({body})=>{
       expect(body.msg).toBe("Invalid Data Type")
+    })
+  })
+})
+
+describe('getting topics based on commission', ()=>{
+  test("200 - Gets all topics for commission",()=>{
+    return request(app)
+    .get('/api/topics/Cheshire')
+    .expect(200)
+    .then(({body: {topics}})=>{
+      expect(topics).toHaveLength(2)
+      topics.forEach(topic=>{
+        expect(topic).toMatchObject({
+          commissionId: 1,
+          topicId: expect.any(Number)
+        })
+      })
+    })
+  })
+  test('400 - commission doesnt exist', ()=>{
+    return request(app)
+    .get('/api/topics/london')
+    .expect(400)
+    .then(({body})=>{
+      expect(body.msg).toBe("No Commission Found")
+    })
+  })
+  test('400 - invalid data type for commission', ()=>{
+    return request(app)
+    .get('/api/topics/1')
+    .expect(400)
+    .then(({body})=>{
+      expect(body.msg).toBe('Incorrect data type for commission')
+    })
+  })
+  test('200 - commission found but no topics associated',()=>{
+    return request(app)
+    .get('/api/topics/Nottingham')
+    .expect(200)
+    .then(({body: {topics}})=>{
+      expect(topics).toEqual([])
     })
   })
 })
