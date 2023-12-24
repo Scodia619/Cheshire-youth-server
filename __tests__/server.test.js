@@ -416,6 +416,19 @@ describe('Creating a new topic', ()=>{
       expect(body.msg).toBe('Invalid Data Type')
     })
   })
+  test('400 - Topic already exists', ()=>{
+    const newTopic = {
+      topic_name: 'knife crime',
+      topic_description: 'Stabbing'
+    }
+    return request(app)
+    .post('/api/topics')
+    .send(newTopic)
+    .expect(400)
+    .then(({body})=>{
+      expect(body.msg).toBe('Topic already exists')
+    })
+  })
 })
 
 describe('Get all Topics', ()=>{
@@ -436,7 +449,7 @@ describe('Get all Topics', ()=>{
   })
 })
 
-describe.only('Linking a topic to commission', ()=>{
+describe('Linking a topic to commission', ()=>{
   test('201 - links topic to commission', ()=>{
     const newTopicLink = {
       topic: "knife crime",

@@ -46,6 +46,20 @@ exports.postTopic = async (req, res, next) => {
       throw error;
     }
 
+     const topicDetails = await prisma.topic.findUnique({
+        where: {
+            topic: topic_name
+        }
+     })
+
+     
+     if(topicDetails){
+        const error = new Error();
+        error.status = 400
+        error.msg = 'Topic already exists'
+        throw error
+     }
+
     const topic = await prisma.topic.create({
       data: { topic: topic_name, topic_description: topic_description },
     });
