@@ -436,10 +436,10 @@ describe('Get all Topics', ()=>{
   })
 })
 
-describe('Linking a topic to commission', ()=>{
+describe.only('Linking a topic to commission', ()=>{
   test('201 - links topic to commission', ()=>{
     const newTopicLink = {
-      topicId: 1,
+      topic: "knife crime",
       commission: 'Nottingham'
     }
     return request(app)
@@ -449,14 +449,14 @@ describe('Linking a topic to commission', ()=>{
     .then(({body: {link}})=>{
       expect(link).toMatchObject({
         id: 4,
-        topicId: 1,
+        topicId: 2,
         commissionId: 3
       })
     })
   })
   test('400 - Topic already linked to Commission', ()=>{
     const newTopicLink = {
-      topicId: 1,
+      topic: 'knife crime',
       commission: 'Cheshire'
     }
     return request(app)
@@ -469,7 +469,7 @@ describe('Linking a topic to commission', ()=>{
   })
   test('400 - Missing Data', ()=>{
     const newTopicLink = {
-      topicId: 1
+      topic: 'knife crime'
     }
     return request(app)
     .post('/api/topics/link')

@@ -66,9 +66,9 @@ exports.getAllTopics = async (req, res, next) => {
 };
 
 exports.linkTopic = async (req, res, next) => {
-  const { topicId, commission } = req.body;
+  const { topic, commission } = req.body;
   try {
-    if (!topicId || !commission) {
+    if (!topic || !commission) {
       const error = new Error();
       error.status = 400;
       error.msg = "Missing Data";
@@ -81,10 +81,16 @@ exports.linkTopic = async (req, res, next) => {
       },
     });
 
+    const topicData = await prisma.topic.findUnique({
+        where: {
+            topic: topic
+        }
+    })
+
     const topicCheck = await prisma.commissionTopics.findUnique({
       where: {
         topicId_commissionId: {
-            topicId: topicId, // Replace with the actual topicId
+            topicId: topicData.topic_id, // Replace with the actual topicId
             commissionId: commissionData.commission_id, // Replace with the actual commissionId
           },
       },
@@ -98,7 +104,7 @@ exports.linkTopic = async (req, res, next) => {
     }
 
     const link = await prisma.commissionTopics.create({
-      data: { topicId: topicId, commissionId: commissionData.commission_id},
+      data: { topicId: topicData.topic_id, commissionId: commissionData.commission_id},
     });
 
     res.status(201).send({ link });
