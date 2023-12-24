@@ -52,3 +52,12 @@ exports.postTopic = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.getAllTopics = async(req,res, next) => {
+    try{
+        const topics = await prisma.topic.findMany()
+        res.status(200).send({topics})
+    }catch(err){
+        next(err)
+    }
+}

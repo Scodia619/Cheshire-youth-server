@@ -417,3 +417,21 @@ describe('Creating a new topic', ()=>{
     })
   })
 })
+
+describe('Get all Topics', ()=>{
+  test('200 - gets all topics', ()=>{
+    return request(app)
+    .get('/api/topics')
+    .expect(200)
+    .then(({body: {topics}})=>{
+      expect(topics).toHaveLength(2)
+      topics.forEach(topic=>{
+        expect(topic).toMatchObject({
+          topic_id: expect.any(Number),
+          topic: expect.any(String),
+          topic_description: expect.any(String)
+        })
+      })
+    })
+  })
+})
