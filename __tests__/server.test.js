@@ -435,3 +435,48 @@ describe('Get all Topics', ()=>{
     })
   })
 })
+
+describe('Linking a topic to commission', ()=>{
+  test('201 - links topic to commission', ()=>{
+    const newTopicLink = {
+      topicId: 1,
+      commission: 'Nottingham'
+    }
+    return request(app)
+    .post('/api/topics/link')
+    .send(newTopicLink)
+    .expect(201)
+    .then(({body: {link}})=>{
+      expect(link).toMatchObject({
+        id: 4,
+        topicId: 1,
+        commissionId: 3
+      })
+    })
+  })
+  test('400 - Topic already linked to Commission', ()=>{
+    const newTopicLink = {
+      topicId: 1,
+      commission: 'Cheshire'
+    }
+    return request(app)
+    .post('/api/topics/link')
+    .send(newTopicLink)
+    .expect(400)
+    .then(({body})=>{
+      expect(body.msg).toBe('Topic already linked')
+    })
+  })
+  test('400 - Missing Data', ()=>{
+    const newTopicLink = {
+      topicId: 1
+    }
+    return request(app)
+    .post('/api/topics/link')
+    .send(newTopicLink)
+    .expect(400)
+    .then(({body})=>{
+      expect(body.msg).toBe('Missing Data')
+    })
+  })
+})
