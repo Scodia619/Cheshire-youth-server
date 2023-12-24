@@ -373,3 +373,47 @@ describe('creating a user', ()=>{
     })
   })
 })
+
+describe('Creating a new topic', ()=>{
+  test('201 - Posts a new topic to db and returns that topic data', ()=>{
+    const newTopic = {
+      topic_name: 'Mental Health',
+      topic_description: 'Seeing how the police can help with mental health'
+    }
+    return request(app)
+    .post('/api/topics')
+    .send(newTopic)
+    .expect(201)
+    .then(({body: {topic}})=>{
+      expect(topic).toMatchObject({
+        topic_id: 3,
+        topic: 'Mental Health',
+        topic_description: 'Seeing how the police can help with mental health'
+      })
+    })
+  })
+  test('400 - missing data', ()=>{
+    const newTopic = {
+      topic_name: 'Mental Health'
+    }
+    return request(app)
+    .post('/api/topics')
+    .send(newTopic)
+    .expect(({body})=>{
+      expect(body.msg).toBe('Missing data')
+    })
+  })
+  test('400 - incorrect data type', ()=>{
+    const newTopic = {
+      topic_name: 'Mental Health',
+      topic_description: 1
+    }
+    return request(app)
+    .post('/api/topics')
+    .send(newTopic)
+    .expect(400)
+    .then(({body})=>{
+      expect(body.msg).toBe('Invalid Data Type')
+    })
+  })
+})
