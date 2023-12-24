@@ -35,7 +35,7 @@ const seed = async () => {
   })
 
   await prisma.commissionTopics.createMany({
-    data: [{commissionId: 1, topicId: 1}, {commissionId: 1, topicId: 2}]
+    data: [{commissionId: 1, topicId: 1}, {commissionId: 1, topicId: 2}, {commissionId: 2, topicId: 2}]
   })
 
   await prisma.reports.createMany({

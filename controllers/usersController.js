@@ -29,3 +29,30 @@ exports.loginUser = async (req, res, next) => {
         next(err)
     }
 }
+
+exports.postUser = async (req, res, next) => {
+    const {username, password} = req.body
+    try{
+        const currentUser = await prisma.users.findUnique({
+            where: {
+                username: username
+            }
+        })
+
+        if(currentUser){
+            const error = new Error();
+            error.status = 400
+            error.code = 'USER_EXISTS'
+            error.msg = 'Username already exists'
+            throw error
+        }else{
+            const user = await prisma.users.create({
+                data: {username, password}
+            })
+
+            res.status(201).send({user})
+        }
+    }catch(err){
+        next(err)
+    }
+}

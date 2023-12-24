@@ -343,3 +343,33 @@ describe('getting topics based on commission', ()=>{
     })
   })
 })
+
+describe('creating a user', ()=>{
+  test('201 - posts the user', ()=>{
+    const newUser = {
+      username: 'amym11',
+      password: '1234'
+    }
+    return request(app)
+    .post('/api/users/create')
+    .send(newUser)
+    .expect(201)
+    .then(({body: {user}})=>{
+      expect(user.username).toBe('amym11')
+      expect(user.password).toBe('1234')
+    })
+  })
+  test('400 - username already exists', ()=>{
+    const newUser = {
+      username: 'scodia619',
+      password: '1234'
+    }
+    return request(app)
+    .post('/api/users/create')
+    .send(newUser)
+    .expect(400)
+    .then(({body})=>{
+      expect(body.msg).toBe('Username already exists')
+    })
+  })
+})
