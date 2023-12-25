@@ -1,8 +1,8 @@
-const { selectCommissionByName, selectAllCommissions, getCommissionByUser } = require("../controllers/commissionController");
+const { selectCommissionByName, selectAllCommissions, getCommissionByUser, postCommission } = require("../controllers/commissionController");
 
 const commissionRouter = require("express").Router();
 
-commissionRouter.route('/').get(selectAllCommissions)
+commissionRouter.route('/').get(selectAllCommissions).post(postCommission)
 commissionRouter.route("/user/:user_id").get(getCommissionByUser)
 commissionRouter.route("/:commission").get(selectCommissionByName)
 

@@ -493,3 +493,61 @@ describe('Linking a topic to commission', ()=>{
     })
   })
 })
+
+describe('Creates a commission', ()=>{
+  test('201 - creates a new commission', ()=>{
+    const commissionData = {
+      commission: 'North Yorkshire',
+      commission_image: 'https://i.ibb.co/zsMqH6f/Cheshire-Youth-Commission-2023.jpg'
+    }
+    return request(app)
+    .post('/api/commission')
+    .send(commissionData)
+    .expect(201)
+    .then(({body:{commission}})=>{
+      expect(commission).toMatchObject({
+        commission_id: 4,
+        commission: 'North Yorkshire',
+        commission_image: 'https://i.ibb.co/zsMqH6f/Cheshire-Youth-Commission-2023.jpg'
+      })
+    })
+  })
+  test('400 - commission already made', ()=>{
+    const commissionData = {
+      commission: 'Cheshire',
+      commission_image: 'https://i.ibb.co/zsMqH6f/Cheshire-Youth-Commission-2023.jpg'
+    }
+    return request(app)
+    .post('/api/commission')
+    .send(commissionData)
+    .expect(400)
+    .then(({body})=>{
+      expect(body.msg).toBe('Commission already created')
+    })
+  })
+  test('400 - Missing Data', ()=> {
+    const commissionData = {
+      commission: 'North Yorkshire',
+    }
+    return request(app)
+    .post('/api/commission')
+    .send(commissionData)
+    .expect(400)
+    .then(({body})=>{
+      expect(body.msg).toBe('Missing Data')
+    })
+  })
+  test('400 - Incorrect Data Type', ()=>{
+    const commissionData = {
+      commission: 1,
+      commission_image: 1
+    }
+    return request(app)
+    .post('/api/commission')
+    .send(commissionData)
+    .expect(400)
+    .then(({body})=>{
+      expect(body.msg).toBe('Incorrect Data Type')
+    })
+  })
+})

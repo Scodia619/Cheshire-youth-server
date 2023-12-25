@@ -66,3 +66,47 @@ exports.getCommissionByUser = async (req, res, next) => {
         next(err)
     }
 }
+
+exports.postCommission = async (req, res, next) => {
+    try{
+        const {commission, commission_image} = req.body
+        if(!commission || !commission_image){
+            const error = new Error();
+            error.status = 400
+            error.msg = 'Missing Data'
+            throw error
+        }
+
+        if(!isNaN(parseInt(commission)) || !isNaN(parseInt(commission_image))){
+            const error = new Error();
+            error.status = 400
+            error.msg = 'Incorrect Data Type'
+            throw error
+        }
+
+        const commissionsData = await prisma.commission.findUnique({
+            where: {
+                commission: commission
+            }
+        })
+
+        if(commissionsData){
+            const error = new Error();
+            error.status = 400
+            error.msg = 'Commission already created'
+            throw error
+        }
+
+        const newCommission = await prisma.commission.create({
+            data: {
+                commission: commission,
+                commission_image: commission_image
+            }
+        })
+
+        res.status(201).send({commission: newCommission})
+
+    }catch(err){
+        next(err)
+    }
+}
