@@ -35,7 +35,6 @@ exports.postUser = async (req, res, next) => {
     const {username, password} = req.body
     try{
         const hashedPassword = passwordHash.generate(password);
-        console.log(passwordHash.generate('1234'))
         const currentUser = await prisma.users.findUnique({
             where: {
                 username: username
