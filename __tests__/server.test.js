@@ -197,357 +197,412 @@ describe("Adding Topic query for commission reports", () => {
         });
       });
   });
-  test("404 - Topic doesnt exist", ()=> {
+  test("404 - Topic doesnt exist", () => {
     return request(app)
-    .get("/api/reports/Cheshire?topic=mental health")
-    .expect(404)
-    .then(({body})=>{
-        expect(body.msg).toBe("No Topic Found")
-    })
-  })
-  test("400 - Incorrect Data Type", ()=> {
+      .get("/api/reports/Cheshire?topic=mental health")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No Topic Found");
+      });
+  });
+  test("400 - Incorrect Data Type", () => {
     return request(app)
-    .get("/api/reports/Cheshire?topic=1")
-    .expect(400)
-    .then(({body})=>{
-        expect(body.msg).toBe("Incorrect Data Type")
-    })
-  })
-  test("200 - No records returns an empty array", ()=>{
+      .get("/api/reports/Cheshire?topic=1")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Incorrect Data Type");
+      });
+  });
+  test("200 - No records returns an empty array", () => {
     return request(app)
-    .get("/api/reports/Cumbria?topic=relationships with the police")
-    .expect(200)
-    .then(({body: {reports}})=> {
-        expect(reports).toEqual([])
-    })
-  })
+      .get("/api/reports/Cumbria?topic=relationships with the police")
+      .expect(200)
+      .then(({ body: { reports } }) => {
+        expect(reports).toEqual([]);
+      });
+  });
 });
 
-describe('gets all commissions', ()=>{
-    test('200 - gets all commissions',()=>{
-        return request(app)
-        .get('/api/commission')
-        .expect(200)
-        .then(({body: {commissions}})=>{
-            expect(commissions).toHaveLength(3)
-        })
-    })
-})
+describe("gets all commissions", () => {
+  test("200 - gets all commissions", () => {
+    return request(app)
+      .get("/api/commission")
+      .expect(200)
+      .then(({ body: { commissions } }) => {
+        expect(commissions).toHaveLength(3);
+      });
+  });
+});
 
-describe('logging in a user', ()=>{
-  test('200 - gets the correct user', ()=>{
+describe("logging in a user", () => {
+  test("200 - gets the correct user", () => {
     const user = {
-      username: 'scodia619',
-      password: '1234'
-    }
+      username: "scodia619",
+      password: "1234",
+    };
     return request(app)
-    .post('/api/users/login')
-    .send(user)
-    .expect(200)
-    .then(({body: {user}})=>{
-      expect(user.username).toBe('scodia619')
-      expect(user.password).toBe('1234')
-      expect(user.isAdmin).toEqual(true)
-    })
-  })
-  test('400 - No username', ()=>{
+      .post("/api/users/login")
+      .send(user)
+      .expect(200)
+      .then(({ body: { user } }) => {
+        expect(user.username).toBe("scodia619");
+        expect(user.password).toBe("1234");
+        expect(user.isAdmin).toEqual(true);
+      });
+  });
+  test("400 - No username", () => {
     const user = {
-      username: 'andy123',
-      password: '1234'
-    }
+      username: "andy123",
+      password: "1234",
+    };
     return request(app)
-    .post('/api/users/login')
-    .send(user)
-    .expect(400)
-    .then(({body})=>{
-      expect(body.msg).toBe('Invalid Username')
-    })
-  })
-  test('400 -Invalid Password', ()=> {
+      .post("/api/users/login")
+      .send(user)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid Username");
+      });
+  });
+  test("400 -Invalid Password", () => {
     const user = {
-      username: 'scodia619',
-      password: '2134'
-    }
+      username: "scodia619",
+      password: "2134",
+    };
     return request(app)
-    .post('/api/users/login')
-    .send(user)
-    .expect(400)
-    .then(({body})=>{
-      expect(body.msg).toBe('Invalid Password')
-    })
-  })
-})
+      .post("/api/users/login")
+      .send(user)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid Password");
+      });
+  });
+});
 
-describe("Get all commissions based on a user", ()=>{
-  test("200 - gets all users", ()=>{
+describe("Get all commissions based on a user", () => {
+  test("200 - gets all users", () => {
     return request(app)
-    .get("/api/commission/user/1")
-    .expect(200)
-    .then(({body: {commissions}})=>{
-      expect(commissions).toHaveLength(2)
-      commissions.forEach(commission => {
-        expect(commission).toMatchObject({
-          userId: 1,
-          commissionId: expect.any(Number) 
-        })
-      })
-    })
-  })
-  test("400 - wrong data type for user", ()=>{
+      .get("/api/commission/user/1")
+      .expect(200)
+      .then(({ body: { commissions } }) => {
+        expect(commissions).toHaveLength(2);
+        commissions.forEach((commission) => {
+          expect(commission).toMatchObject({
+            userId: 1,
+            commissionId: expect.any(Number),
+          });
+        });
+      });
+  });
+  test("400 - wrong data type for user", () => {
     return request(app)
-    .get("/api/commission/user/banana")
-    .expect(400)
-    .then(({body})=>{
-      expect(body.msg).toBe("Invalid Data Type")
-    })
-  })
-})
+      .get("/api/commission/user/banana")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid Data Type");
+      });
+  });
+});
 
-describe('getting topics based on commission', ()=>{
-  test("200 - Gets all topics for commission",()=>{
+describe("getting topics based on commission", () => {
+  test("200 - Gets all topics for commission", () => {
     return request(app)
-    .get('/api/topics/Cheshire')
-    .expect(200)
-    .then(({body: {topics}})=>{
-      expect(topics).toHaveLength(2)
-      topics.forEach(topic=>{
-        expect(topic).toMatchObject({
-          commissionId: 1,
-          topicId: expect.any(Number)
-        })
-      })
-    })
-  })
-  test('400 - commission doesnt exist', ()=>{
+      .get("/api/topics/Cheshire")
+      .expect(200)
+      .then(({ body: { topics } }) => {
+        expect(topics).toHaveLength(2);
+        topics.forEach((topic) => {
+          expect(topic).toMatchObject({
+            commissionId: 1,
+            topicId: expect.any(Number),
+          });
+        });
+      });
+  });
+  test("400 - commission doesnt exist", () => {
     return request(app)
-    .get('/api/topics/london')
-    .expect(400)
-    .then(({body})=>{
-      expect(body.msg).toBe("No Commission Found")
-    })
-  })
-  test('400 - invalid data type for commission', ()=>{
+      .get("/api/topics/london")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No Commission Found");
+      });
+  });
+  test("400 - invalid data type for commission", () => {
     return request(app)
-    .get('/api/topics/1')
-    .expect(400)
-    .then(({body})=>{
-      expect(body.msg).toBe('Incorrect data type for commission')
-    })
-  })
-  test('200 - commission found but no topics associated',()=>{
+      .get("/api/topics/1")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Incorrect data type for commission");
+      });
+  });
+  test("200 - commission found but no topics associated", () => {
     return request(app)
-    .get('/api/topics/Nottingham')
-    .expect(200)
-    .then(({body: {topics}})=>{
-      expect(topics).toEqual([])
-    })
-  })
-})
+      .get("/api/topics/Nottingham")
+      .expect(200)
+      .then(({ body: { topics } }) => {
+        expect(topics).toEqual([]);
+      });
+  });
+});
 
-describe('creating a user', ()=>{
-  test('201 - posts the user', ()=>{
+describe("creating a user", () => {
+  test("201 - posts the user", () => {
     const newUser = {
-      username: 'amym11',
-      password: '1234'
-    }
+      username: "amym11",
+      password: "1234",
+    };
     return request(app)
-    .post('/api/users/create')
-    .send(newUser)
-    .expect(201)
-    .then(({body: {user}})=>{
-      expect(user.username).toBe('amym11')
-      expect(user.password).toBe('1234')
-    })
-  })
-  test('400 - username already exists', ()=>{
+      .post("/api/users/create")
+      .send(newUser)
+      .expect(201)
+      .then(({ body: { user } }) => {
+        expect(user.username).toBe("amym11");
+        expect(user.password).toBe("1234");
+      });
+  });
+  test("400 - username already exists", () => {
     const newUser = {
-      username: 'scodia619',
-      password: '1234'
-    }
+      username: "scodia619",
+      password: "1234",
+    };
     return request(app)
-    .post('/api/users/create')
-    .send(newUser)
-    .expect(400)
-    .then(({body})=>{
-      expect(body.msg).toBe('Username already exists')
-    })
-  })
-})
+      .post("/api/users/create")
+      .send(newUser)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Username already exists");
+      });
+  });
+});
 
-describe('Creating a new topic', ()=>{
-  test('201 - Posts a new topic to db and returns that topic data', ()=>{
+describe("Creating a new topic", () => {
+  test("201 - Posts a new topic to db and returns that topic data", () => {
     const newTopic = {
-      topic_name: 'Mental Health',
-      topic_description: 'Seeing how the police can help with mental health'
-    }
+      topic_name: "Mental Health",
+      topic_description: "Seeing how the police can help with mental health",
+    };
     return request(app)
-    .post('/api/topics')
-    .send(newTopic)
-    .expect(201)
-    .then(({body: {topic}})=>{
-      expect(topic).toMatchObject({
-        topic_id: 3,
-        topic: 'Mental Health',
-        topic_description: 'Seeing how the police can help with mental health'
-      })
-    })
-  })
-  test('400 - missing data', ()=>{
-    const newTopic = {
-      topic_name: 'Mental Health'
-    }
-    return request(app)
-    .post('/api/topics')
-    .send(newTopic)
-    .expect(({body})=>{
-      expect(body.msg).toBe('Missing data')
-    })
-  })
-  test('400 - incorrect data type', ()=>{
-    const newTopic = {
-      topic_name: 'Mental Health',
-      topic_description: 1
-    }
-    return request(app)
-    .post('/api/topics')
-    .send(newTopic)
-    .expect(400)
-    .then(({body})=>{
-      expect(body.msg).toBe('Invalid Data Type')
-    })
-  })
-  test('400 - Topic already exists', ()=>{
-    const newTopic = {
-      topic_name: 'knife crime',
-      topic_description: 'Stabbing'
-    }
-    return request(app)
-    .post('/api/topics')
-    .send(newTopic)
-    .expect(400)
-    .then(({body})=>{
-      expect(body.msg).toBe('Topic already exists')
-    })
-  })
-})
-
-describe('Get all Topics', ()=>{
-  test('200 - gets all topics', ()=>{
-    return request(app)
-    .get('/api/topics')
-    .expect(200)
-    .then(({body: {topics}})=>{
-      expect(topics).toHaveLength(2)
-      topics.forEach(topic=>{
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(201)
+      .then(({ body: { topic } }) => {
         expect(topic).toMatchObject({
-          topic_id: expect.any(Number),
-          topic: expect.any(String),
-          topic_description: expect.any(String)
-        })
-      })
-    })
-  })
-})
+          topic_id: 3,
+          topic: "Mental Health",
+          topic_description:
+            "Seeing how the police can help with mental health",
+        });
+      });
+  });
+  test("400 - missing data", () => {
+    const newTopic = {
+      topic_name: "Mental Health",
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(({ body }) => {
+        expect(body.msg).toBe("Missing data");
+      });
+  });
+  test("400 - incorrect data type", () => {
+    const newTopic = {
+      topic_name: "Mental Health",
+      topic_description: 1,
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid Data Type");
+      });
+  });
+  test("400 - Topic already exists", () => {
+    const newTopic = {
+      topic_name: "knife crime",
+      topic_description: "Stabbing",
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Topic already exists");
+      });
+  });
+});
 
-describe('Linking a topic to commission', ()=>{
-  test('201 - links topic to commission', ()=>{
+describe("Get all Topics", () => {
+  test("200 - gets all topics", () => {
+    return request(app)
+      .get("/api/topics")
+      .expect(200)
+      .then(({ body: { topics } }) => {
+        expect(topics).toHaveLength(2);
+        topics.forEach((topic) => {
+          expect(topic).toMatchObject({
+            topic_id: expect.any(Number),
+            topic: expect.any(String),
+            topic_description: expect.any(String),
+          });
+        });
+      });
+  });
+});
+
+describe("Linking a topic to commission", () => {
+  test("201 - links topic to commission", () => {
     const newTopicLink = {
       topic: "knife crime",
-      commission: 'Nottingham'
-    }
+      commission: "Nottingham",
+    };
     return request(app)
-    .post('/api/topics/link')
-    .send(newTopicLink)
-    .expect(201)
-    .then(({body: {link}})=>{
-      expect(link).toMatchObject({
-        id: 4,
-        topicId: 2,
-        commissionId: 3
-      })
-    })
-  })
-  test('400 - Topic already linked to Commission', ()=>{
+      .post("/api/topics/link")
+      .send(newTopicLink)
+      .expect(201)
+      .then(({ body: { link } }) => {
+        expect(link).toMatchObject({
+          id: 4,
+          topicId: 2,
+          commissionId: 3,
+        });
+      });
+  });
+  test("400 - Topic already linked to Commission", () => {
     const newTopicLink = {
-      topic: 'knife crime',
+      topic: "knife crime",
+      commission: "Cheshire",
+    };
+    return request(app)
+      .post("/api/topics/link")
+      .send(newTopicLink)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Topic already linked");
+      });
+  });
+  test("400 - Missing Data", () => {
+    const newTopicLink = {
+      topic: "knife crime",
+    };
+    return request(app)
+      .post("/api/topics/link")
+      .send(newTopicLink)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Missing Data");
+      });
+  });
+});
+
+describe("Creates a commission", () => {
+  test("201 - creates a new commission", () => {
+    const commissionData = {
+      commission: "North Yorkshire",
+      commission_image:
+        "https://i.ibb.co/zsMqH6f/Cheshire-Youth-Commission-2023.jpg",
+    };
+    return request(app)
+      .post("/api/commission")
+      .send(commissionData)
+      .expect(201)
+      .then(({ body: { commission } }) => {
+        expect(commission).toMatchObject({
+          commission_id: 4,
+          commission: "North Yorkshire",
+          commission_image:
+            "https://i.ibb.co/zsMqH6f/Cheshire-Youth-Commission-2023.jpg",
+        });
+      });
+  });
+  test("400 - commission already made", () => {
+    const commissionData = {
+      commission: "Cheshire",
+      commission_image:
+        "https://i.ibb.co/zsMqH6f/Cheshire-Youth-Commission-2023.jpg",
+    };
+    return request(app)
+      .post("/api/commission")
+      .send(commissionData)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Commission already created");
+      });
+  });
+  test("400 - Missing Data", () => {
+    const commissionData = {
+      commission: "North Yorkshire",
+    };
+    return request(app)
+      .post("/api/commission")
+      .send(commissionData)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Missing Data");
+      });
+  });
+  test("400 - Incorrect Data Type", () => {
+    const commissionData = {
+      commission: 1,
+      commission_image: 1,
+    };
+    return request(app)
+      .post("/api/commission")
+      .send(commissionData)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Incorrect Data Type");
+      });
+  });
+});
+
+describe("Deletes a topic from a commission", () => {
+  test("204 - deletes a topic", () => {
+    const deleteData = {
+      topic: "knife crime",
+      commission: "Cheshire",
+    };
+    return request(app)
+    .delete('/api/topics/link')
+    .send(deleteData)
+    .expect(204)
+  });
+  test('400 - Missing Data', ()=>{
+    const deleteData = {
       commission: 'Cheshire'
     }
     return request(app)
-    .post('/api/topics/link')
-    .send(newTopicLink)
-    .expect(400)
-    .then(({body})=>{
-      expect(body.msg).toBe('Topic already linked')
-    })
-  })
-  test('400 - Missing Data', ()=>{
-    const newTopicLink = {
-      topic: 'knife crime'
-    }
-    return request(app)
-    .post('/api/topics/link')
-    .send(newTopicLink)
-    .expect(400)
-    .then(({body})=>{
-      expect(body.msg).toBe('Missing Data')
-    })
-  })
-})
-
-describe('Creates a commission', ()=>{
-  test('201 - creates a new commission', ()=>{
-    const commissionData = {
-      commission: 'North Yorkshire',
-      commission_image: 'https://i.ibb.co/zsMqH6f/Cheshire-Youth-Commission-2023.jpg'
-    }
-    return request(app)
-    .post('/api/commission')
-    .send(commissionData)
-    .expect(201)
-    .then(({body:{commission}})=>{
-      expect(commission).toMatchObject({
-        commission_id: 4,
-        commission: 'North Yorkshire',
-        commission_image: 'https://i.ibb.co/zsMqH6f/Cheshire-Youth-Commission-2023.jpg'
-      })
-    })
-  })
-  test('400 - commission already made', ()=>{
-    const commissionData = {
-      commission: 'Cheshire',
-      commission_image: 'https://i.ibb.co/zsMqH6f/Cheshire-Youth-Commission-2023.jpg'
-    }
-    return request(app)
-    .post('/api/commission')
-    .send(commissionData)
-    .expect(400)
-    .then(({body})=>{
-      expect(body.msg).toBe('Commission already created')
-    })
-  })
-  test('400 - Missing Data', ()=> {
-    const commissionData = {
-      commission: 'North Yorkshire',
-    }
-    return request(app)
-    .post('/api/commission')
-    .send(commissionData)
+    .delete('/api/topics/link')
+    .send(deleteData)
     .expect(400)
     .then(({body})=>{
       expect(body.msg).toBe('Missing Data')
     })
   })
   test('400 - Incorrect Data Type', ()=>{
-    const commissionData = {
+    const deleteData = {
       commission: 1,
-      commission_image: 1
+      topic: 1
     }
     return request(app)
-    .post('/api/commission')
-    .send(commissionData)
+    .delete('/api/topics/link')
+    .send(deleteData)
     .expect(400)
     .then(({body})=>{
       expect(body.msg).toBe('Incorrect Data Type')
     })
   })
-})
+  test('400 - Commission not linked with that topic', ()=>{
+    const deleteData = {
+      commission: 'Nottingham',
+      topic: 'knife crime'
+    }
+    return request(app)
+    .delete('/api/topics/link')
+    .send(deleteData)
+    .expect(400)
+    .then(({body})=>{
+      expect(body.msg).toBe('Commission not linked with topic')
+    })
+  })
+});

@@ -126,3 +126,62 @@ exports.linkTopic = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.deleteTopicLink = async (req, res, next) => {
+  try{
+    const {commission, topic} = req.body
+
+    if(!commission || !topic){
+      const error = new Error();
+      error.status = 400
+      error.msg = 'Missing Data'
+      throw error
+    }
+    if(!isNaN(parseInt(commission)) || !isNaN(parseInt(topic))){
+      const error = new Error();
+      error.status = 400
+      error.msg = 'Incorrect Data Type'
+      throw error
+    }
+    const commissionData = await prisma.commission.findUnique({
+      where: {
+        commission: commission
+      }
+    })
+    const topicData = await prisma.topic.findUnique({
+      where: {
+        topic: topic
+      }
+    })
+    
+    const link = await prisma.commissionTopics.findUnique({
+      where: {
+        topicId_commissionId: {
+          topicId: topicData.topic_id, // Replace with the actual topicId
+          commissionId: commissionData.commission_id, // Replace with the actual commissionId
+        },
+      }
+    })
+
+    if(!link){
+      const error = new Error();
+      error.status = 400
+      error.msg = 'Commission not linked with topic'
+      throw error
+    }
+
+    const deleteData = await prisma.commissionTopics.delete({
+      where: {
+        topicId_commissionId: {
+          topicId: topicData.topic_id, // Replace with the actual topicId
+          commissionId: commissionData.commission_id, // Replace with the actual commissionId
+        },
+      }
+    })
+
+    res.status(204).send()
+
+  }catch(err){
+    next(err)
+  }
+}
