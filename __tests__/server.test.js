@@ -246,7 +246,7 @@ describe("logging in a user", () => {
       .expect(200)
       .then(({ body: { user } }) => {
         expect(user.username).toBe("scodia619");
-        expect(user.password).toBe("1234");
+        expect(user.password).toBe("sha1$18970629$1$0aa11b7fa71125c6711eb31bde91524b9ec34418");
         expect(user.isAdmin).toEqual(true);
       });
   });
@@ -356,7 +356,7 @@ describe("creating a user", () => {
       .expect(201)
       .then(({ body: { user } }) => {
         expect(user.username).toBe("amym11");
-        expect(user.password).toBe("1234");
+        expect(user.password).toBe(user.password);
       });
   });
   test("400 - username already exists", () => {

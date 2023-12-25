@@ -1,5 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const { getUsers } = require("../utils/getUsers");
+const passwordHash = require('password-hash')
 const prisma = new PrismaClient();
 
 exports.loginUser = async (req, res, next) => {
@@ -18,7 +19,7 @@ exports.loginUser = async (req, res, next) => {
             throw error; // Throw the custom error
         }
 
-        if(user.password !== password){
+        if(!passwordHash.verify(password, user.password)){
             const error = new Error("Invalid Password");
             error.status = 400
             error.msg = 'Invalid Password'
@@ -33,6 +34,8 @@ exports.loginUser = async (req, res, next) => {
 exports.postUser = async (req, res, next) => {
     const {username, password} = req.body
     try{
+        const hashedPassword = passwordHash.generate(password);
+        console.log(passwordHash.generate('1234'))
         const currentUser = await prisma.users.findUnique({
             where: {
                 username: username
@@ -45,13 +48,14 @@ exports.postUser = async (req, res, next) => {
             error.code = 'USER_EXISTS'
             error.msg = 'Username already exists'
             throw error
-        }else{
+        }
+
             const user = await prisma.users.create({
-                data: {username, password}
+                data: {username, password: hashedPassword}
             })
 
             res.status(201).send({user})
-        }
+        
     }catch(err){
         next(err)
     }
