@@ -44,17 +44,21 @@ exports.selectReports = async (req, res, next) => {
 
 exports.selectReportsByCommission = async (req, res, next) => {
   const { commission } = req.params;
-  const {topic} = req.query
+  const { topic } = req.query;
   let query = {};
-  if(topic){
-    query = {where: {
-      commission_name: commission,
-      topic_name: topic
-    }}
-  }else{
-    query = {where: {
-      commission_name: commission,
-    }}
+  if (topic) {
+    query = {
+      where: {
+        commission_name: commission,
+        topic_name: topic,
+      },
+    };
+  } else {
+    query = {
+      where: {
+        commission_name: commission,
+      },
+    };
   }
 
   try {
@@ -63,10 +67,10 @@ exports.selectReportsByCommission = async (req, res, next) => {
     if (reports.length === 0) {
       // Fetch commission details using selectCommissionByName function
       const commissionDetails = await getCommissionDetails(commission);
-      if(topic){
-        const topicDetails = await getTopicDetails(topic)
-        if(topicDetails.error && topic){
-          throw topicDetails.error
+      if (topic) {
+        const topicDetails = await getTopicDetails(topic);
+        if (topicDetails.error && topic) {
+          throw topicDetails.error;
         }
       }
 
@@ -75,9 +79,61 @@ exports.selectReportsByCommission = async (req, res, next) => {
       }
 
       // Check if commission details are found but no reports exist
-        return res.status(200).json({ reports: [] });
+      return res.status(200).json({ reports: [] });
     }
     res.status(200).json({ reports });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.deleteReportsByCommission = async (req, res, next) => {
+  const { commission } = req.body;
+  try {
+    if (!commission) {
+      const error = new Error();
+      error.status = 400;
+      error.msg = "Missing Data";
+      throw error;
+    }
+    if (!isNaN(parseInt(commission))) {
+      const error = new Error();
+      error.status = 400;
+      error.msg = "Incorrect Data Type";
+      throw error;
+    }
+    const commissionDetails = await prisma.commission.findUnique({
+      where: {
+        commission: commission
+      }
+    })
+
+    if(!commissionDetails){
+      const error = new Error();
+      error.status = 400;
+      error.msg = "Commission doesnt exist";
+      throw error;
+    }
+
+    const reports = await prisma.reports.findMany({
+      where: {
+        commission_name: commission
+      }
+    })
+
+    if(!reports.length){
+      const error = new Error();
+      error.status = 400;
+      error.msg = "Commission has no reports";
+      throw error;
+    }
+
+    const deletedData = await prisma.reports.deleteMany({
+      where: {
+        commission_name: commission
+      }
+    })
+    res.sendStatus(204)
   } catch (err) {
     next(err);
   }

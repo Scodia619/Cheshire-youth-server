@@ -606,3 +606,61 @@ describe("Deletes a topic from a commission", () => {
     })
   })
 });
+
+describe('Delete all reports from commission', ()=>{
+  test('204 - Deletes the data', ()=>{
+    const data = {
+      commission: 'Cheshire'
+    }
+    return request(app)
+    .delete('/api/reports/delete')
+    .send(data)
+    .expect(204)
+  })
+  test('400 - Missing Data', ()=>{
+    const data = {}
+    return request(app)
+    .delete('/api/reports/delete')
+    .send(data)
+    .expect(400)
+    .then(({body})=>{
+      expect(body.msg).toBe('Missing Data')
+    })
+  })
+  test('400 - Commission doesnt exist', ()=>{
+    const data = {
+      commission: 'Glasgow'
+    }
+    return request(app)
+    .delete('/api/reports/delete')
+    .send(data)
+    .expect(400)
+    .then(({body})=>{
+      expect(body.msg).toBe('Commission doesnt exist')
+    })
+  })
+  test('400 - incorrect data type', ()=>{
+    const data = {
+      commission: 1
+    }
+    return request(app)
+    .delete('/api/reports/delete')
+    .send(data)
+    .expect(400)
+    .then(({body})=>{
+      expect(body.msg).toBe('Incorrect Data Type')
+    })
+  })
+  test('400 - Commission has no reports', ()=>{
+    const data = {
+      commission: 'Nottingham'
+    }
+    return request(app)
+    .delete('/api/reports/delete')
+    .send(data)
+    .expect(400)
+    .then(({body})=>{
+      expect(body.msg).toBe('Commission has no reports')
+    })
+  })
+})
