@@ -664,3 +664,87 @@ describe('Delete all reports from commission', ()=>{
     })
   })
 })
+
+describe('Adding a user to a commission', ()=>{
+  test('201 - Adds a user to a commission', ()=>{
+    const data = {
+      username: 'scodia619',
+      commission: 'Nottingham'
+    }
+    return request(app)
+    .post('/api/commission/add-user')
+    .send(data)
+    .expect(201)
+    .then(({body: {commissionUser}})=>{
+      expect(commissionUser).toMatchObject({
+        id: 3,
+        userId: 1,
+        commissionId: 3
+      })
+    })
+  })
+  test('400 - Missing Data', ()=>{
+    const data = {
+      username: 'scodia619'
+    }
+    return request(app)
+    .post('/api/commission/add-user')
+    .send(data)
+    .expect(400)
+    .then(({body})=>{
+      expect(body.msg).toBe('Missing Data')
+    })
+  })
+  test('400 - Invalid Data', ()=>{
+    const data={
+      username: 1,
+      commission: 1
+    }
+    return request(app)
+    .post('/api/commission/add-user')
+    .send(data)
+    .expect(400)
+    .then(({body})=>{
+      expect(body.msg).toBe('Incorrect Data Type')
+    })
+  })
+  test('400 - Commission doesnt exist', ()=>{
+    const data = {
+      username: 'scodia619',
+      commission: 'Glasgow'
+    }
+    return request(app)
+    .post('/api/commission/add-user')
+    .send(data)
+    .expect(400)
+    .then(({body})=>{
+      expect(body.msg).toBe('Commission doesnt exist')
+    })
+  })
+  test('400 - User already linked to commission', ()=>{
+    const data = {
+      username: 'scodia619',
+      commission: 'Cheshire'
+    }
+    return request(app)
+    .post('/api/commission/add-user')
+    .send(data)
+    .expect(400)
+    .then(({body})=>{
+      expect(body.msg).toBe('User already linked with commission')
+    })
+  })
+  test('400 - User doesnt exist', ()=>{
+    const data = {
+      username: 'number',
+      commission: 'Cheshire'
+    }
+    return request(app)
+    .post('/api/commission/add-user')
+    .send(data)
+    .expect(400)
+    .then(({body})=>{
+      expect(body.msg).toBe('User doesnt exist')
+    })
+  })
+})

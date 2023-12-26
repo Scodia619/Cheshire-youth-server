@@ -110,3 +110,72 @@ exports.postCommission = async (req, res, next) => {
         next(err)
     }
 }
+
+exports.linkUserToCommission = async (req,res,next) => {
+    const {commission, username} = req.body
+    try{
+        if(!commission || !username){
+            const error = new Error();
+            error.status = 400
+            error.msg = 'Missing Data'
+            throw error
+        }
+
+        if(!isNaN(parseInt(commission)) || !isNaN(parseInt(username))){
+            const error = new Error();
+            error.status = 400
+            error.msg = 'Incorrect Data Type'
+            throw error
+        }
+        const commissionData = await prisma.commission.findUnique({
+            where: {
+                commission: commission
+            }
+        })
+
+        if(!commissionData){
+            const error = new Error();
+            error.status = 400
+            error.msg = 'Commission doesnt exist'
+            throw error
+        }
+
+        const user = await prisma.users.findUnique({
+            where: {
+                username: username
+            }
+        })
+
+        if(!user){
+            const error = new Error();
+            error.status = 400
+            error.msg = 'User doesnt exist'
+            throw error
+        }
+
+        const link = await prisma.commissionUser.findUnique({
+            where: {
+                userId_commissionId: {
+                    userId: user.user_id,
+                    commissionId: commissionData.commission_id
+                }
+            }
+        })
+
+        if(link){
+            const error = new Error()
+            error.status = 400
+            error.msg = 'User already linked with commission'
+            throw error
+        }
+
+        const commissionUser = await prisma.commissionUser.create({
+            data: {userId: user.user_id, commissionId: commissionData.commission_id}
+        })
+
+        res.status(201).send({commissionUser})
+    }
+    catch(err){
+        next(err)
+    }
+}
