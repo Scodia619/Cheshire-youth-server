@@ -1,5 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
-const { getUsers } = require("../utils/getUsers");
+const { getAlllUsers } = require("./utils");
 const passwordHash = require('password-hash');
 const { missingDetailsError, incorrectDataError, noUserError } = require("./errorConstants");
 const prisma = new PrismaClient();

@@ -323,7 +323,7 @@ describe("getting topics based on commission", () => {
       .get("/api/topics/london")
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("No Commission Found");
+        expect(body.msg).toBe("Commission doesnt exist");
       });
   });
   test("400 - invalid data type for commission", () => {
@@ -331,7 +331,7 @@ describe("getting topics based on commission", () => {
       .get("/api/topics/1")
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Incorrect data type for commission");
+        expect(body.msg).toBe("Incorrect Data Type");
       });
   });
   test("200 - commission found but no topics associated", () => {

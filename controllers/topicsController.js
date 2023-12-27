@@ -1,5 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
-const getCommissionDetails = require("../utils/getCommissionDetails");
+const {getCommissionDetails} = require("./utils");
 const { missingDetailsError, incorrectDataError } = require("./errorConstants");
 const prisma = new PrismaClient();
 
