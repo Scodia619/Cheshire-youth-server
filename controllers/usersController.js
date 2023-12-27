@@ -90,3 +90,12 @@ exports.deleteUser = async (req, res, next) => {
     }
     catch(err){next(err)}
 }
+
+exports.getUsers = async (req, res, next) => {
+    try{
+        const users = await prisma.users.findMany({})
+        res.status(200).send({users})
+    }catch(err){
+        next(err)
+    }
+}

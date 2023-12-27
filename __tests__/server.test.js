@@ -788,3 +788,14 @@ describe('Delete an admin', ()=>{
     })
   })
 })
+
+describe('Gets all users', ()=>{
+  test('200 - gets all the users', ()=>{
+    return request(app)
+    .get('/api/users')
+    .expect(200)
+    .then(({body: {users}})=>{
+      expect(users).toHaveLength(2)
+    })
+  })
+})
