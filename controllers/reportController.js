@@ -1,7 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
-const getCommissionDetails = require("../utils/getCommissionDetails");
-const getTopicDetails = require("../utils/getTopicDetails");
-const { missingDetailsError, noCommissionError } = require("./errorConstants");
+const {getCommissionDetails, getTopicDetails} = require("./utils");
+const { missingDetailsError, noCommissionError, incorrectDataError } = require("./errorConstants");
 const prisma = new PrismaClient();
 
 exports.postReport = async (req, res, next) => {
@@ -87,19 +86,10 @@ exports.deleteReportsByCommission = async (req, res, next) => {
   const { commission } = req.body;
   try {
     if (!commission) throw missingDetailsError
-    if (!isNaN(parseInt(commission))) {
-      const error = new Error();
-      error.status = 400;
-      error.msg = "Incorrect Data Type";
-      throw error;
-    }
-    const commissionDetails = await prisma.commission.findUnique({
-      where: {
-        commission: commission
-      }
-    })
+    if (!isNaN(parseInt(commission))) throw incorrectDataError
+    const commissionDetails = await getCommissionDetails(commission)
 
-    if(!commissionDetails) throw noCommissionError
+    if(commissionDetails.error) throw commissionDetails.error
 
     const reports = await prisma.reports.findMany({
       where: {
