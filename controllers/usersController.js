@@ -1,6 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
 const { getUsers } = require("../utils/getUsers");
-const passwordHash = require('password-hash')
+const passwordHash = require('password-hash');
+const { missingDetailsError, incorrectDataError, noUserError } = require("./errorConstants");
 const prisma = new PrismaClient();
 
 exports.loginUser = async (req, res, next) => {
@@ -58,4 +59,34 @@ exports.postUser = async (req, res, next) => {
     }catch(err){
         next(err)
     }
+}
+
+exports.deleteUser = async (req, res, next) => {
+    const {username} = req.body
+    try{
+        if(!username) throw missingDetailsError
+        if(!isNaN(parseInt(username))) throw incorrectDataError
+
+        const user = await prisma.users.findUnique({
+            where: {
+                username: username
+            }
+        })
+
+        if(!user) throw noUserError
+
+        const deletedLinks = await prisma.commissionUser.deleteMany({
+            where: {
+                    userId: user.user_id
+                }
+        })
+        const deletedUser = await prisma.users.delete({
+            where: {
+                user_id: user.user_id
+            }
+        })
+
+        res.sendStatus(204)
+    }
+    catch(err){next(err)}
 }

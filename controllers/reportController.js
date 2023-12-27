@@ -1,24 +1,20 @@
 const { PrismaClient } = require("@prisma/client");
 const getCommissionDetails = require("../utils/getCommissionDetails");
 const getTopicDetails = require("../utils/getTopicDetails");
+const { missingDetailsError, noCommissionError } = require("./errorConstants");
 const prisma = new PrismaClient();
 
 exports.postReport = async (req, res, next) => {
   const { commission_name, body_experience, body_improvement, topic_name } =
     req.body;
 
-  if (
-    !commission_name ||
-    !body_experience ||
-    !body_improvement ||
-    !topic_name
-  ) {
-    return res.status(400).json({
-      msg: "Bad Request - Data Needed or Topic / Commission doesnt exist",
-    });
-  }
-
   try {
+    if (
+      !commission_name ||
+      !body_experience ||
+      !body_improvement ||
+      !topic_name
+    ) throw missingDetailsError
     const report = await prisma.reports.create({
       data: {
         commission_name,
@@ -90,12 +86,7 @@ exports.selectReportsByCommission = async (req, res, next) => {
 exports.deleteReportsByCommission = async (req, res, next) => {
   const { commission } = req.body;
   try {
-    if (!commission) {
-      const error = new Error();
-      error.status = 400;
-      error.msg = "Missing Data";
-      throw error;
-    }
+    if (!commission) throw missingDetailsError
     if (!isNaN(parseInt(commission))) {
       const error = new Error();
       error.status = 400;
@@ -108,12 +99,7 @@ exports.deleteReportsByCommission = async (req, res, next) => {
       }
     })
 
-    if(!commissionDetails){
-      const error = new Error();
-      error.status = 400;
-      error.msg = "Commission doesnt exist";
-      throw error;
-    }
+    if(!commissionDetails) throw noCommissionError
 
     const reports = await prisma.reports.findMany({
       where: {

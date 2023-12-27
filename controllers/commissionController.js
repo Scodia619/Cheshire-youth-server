@@ -1,4 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
+const { missingDetailsError, noCommissionError, incorrectDataError, noUserError } = require("./errorConstants");
 const prisma = new PrismaClient();
 
 //Reject on Not Found Error
@@ -6,24 +7,14 @@ exports.selectCommissionByName = async (req, res, next) => {
     const {commission} = req.params
     try{
 
-        if (!isNaN(parseInt(commission))) {
-            const error = new Error();
-            error.code = "INVALID_DATA";
-            error.status = 400
-            error.msg = "Incorrect data type for commission"
-            throw error;
-          }
+        if (!isNaN(parseInt(commission))) throw incorrectDataError
 
         const commissionData = await prisma.commission.findUnique({
             where: {
                 commission: commission
             },
         })
-        if (!commissionData) {
-            const error = new Error("No Commission Found");
-            error.code = "P2025"; // Custom error code
-            throw error; // Throw the custom error
-          }
+        if (!commissionData) throw noCommissionError
         res.status(200).json({commission: commissionData})
     }catch(err){
         next(err)
@@ -45,12 +36,7 @@ exports.getCommissionByUser = async (req, res, next) => {
 
         const parsedId = parseInt(user_id)
 
-        if (isNaN(parsedId)) {
-            const error = new Error();
-            error.status = 400;
-            error.msg = "Invalid Data Type"
-            throw error;
-        }
+        if (isNaN(parsedId)) throw incorrectDataError
 
         const commissions = await prisma.commissionUser.findMany({
             where: {
@@ -70,19 +56,9 @@ exports.getCommissionByUser = async (req, res, next) => {
 exports.postCommission = async (req, res, next) => {
     try{
         const {commission, commission_image} = req.body
-        if(!commission || !commission_image){
-            const error = new Error();
-            error.status = 400
-            error.msg = 'Missing Data'
-            throw error
-        }
+        if(!commission || !commission_image) throw missingDetailsError
 
-        if(!isNaN(parseInt(commission)) || !isNaN(parseInt(commission_image))){
-            const error = new Error();
-            error.status = 400
-            error.msg = 'Incorrect Data Type'
-            throw error
-        }
+        if(!isNaN(parseInt(commission)) || !isNaN(parseInt(commission_image))) throw incorrectDataError
 
         const commissionsData = await prisma.commission.findUnique({
             where: {
@@ -114,19 +90,9 @@ exports.postCommission = async (req, res, next) => {
 exports.linkUserToCommission = async (req,res,next) => {
     const {commission, username} = req.body
     try{
-        if(!commission || !username){
-            const error = new Error();
-            error.status = 400
-            error.msg = 'Missing Data'
-            throw error
-        }
+        if(!commission || !username) throw missingDetailsError
 
-        if(!isNaN(parseInt(commission)) || !isNaN(parseInt(username))){
-            const error = new Error();
-            error.status = 400
-            error.msg = 'Incorrect Data Type'
-            throw error
-        }
+        if(!isNaN(parseInt(commission)) || !isNaN(parseInt(username))) throw incorrectDataError
         const commissionData = await prisma.commission.findUnique({
             where: {
                 commission: commission
@@ -146,12 +112,7 @@ exports.linkUserToCommission = async (req,res,next) => {
             }
         })
 
-        if(!user){
-            const error = new Error();
-            error.status = 400
-            error.msg = 'User doesnt exist'
-            throw error
-        }
+        if(!user) throw noUserError
 
         const link = await prisma.commissionUser.findUnique({
             where: {

@@ -1,5 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const getCommissionDetails = require("../utils/getCommissionDetails");
+const { missingDetailsError, incorrectDataError } = require("./errorConstants");
 const prisma = new PrismaClient();
 
 exports.getTopicsByCommission = async (req, res, next) => {
@@ -29,36 +30,23 @@ exports.postTopic = async (req, res, next) => {
   const { topic_name, topic_description } = req.body;
 
   try {
-    if (!topic_name || !topic_description) {
+    if (!topic_name || !topic_description) throw missingDetailsError;
+
+    if (!isNaN(parseInt(topic_name)) || !isNaN(parseInt(topic_description)))
+      throw incorrectDataError;
+
+    const topicDetails = await prisma.topic.findUnique({
+      where: {
+        topic: topic_name,
+      },
+    });
+
+    if (topicDetails) {
       const error = new Error();
       error.status = 400;
-      error.msg = "Missing data";
+      error.msg = "Topic already exists";
       throw error;
     }
-
-    if (
-      typeof topic_name !== "string" ||
-      typeof topic_description !== "string"
-    ) {
-      const error = new Error();
-      error.status = 400;
-      error.msg = "Invalid Data Type";
-      throw error;
-    }
-
-     const topicDetails = await prisma.topic.findUnique({
-        where: {
-            topic: topic_name
-        }
-     })
-
-     
-     if(topicDetails){
-        const error = new Error();
-        error.status = 400
-        error.msg = 'Topic already exists'
-        throw error
-     }
 
     const topic = await prisma.topic.create({
       data: { topic: topic_name, topic_description: topic_description },
@@ -82,13 +70,8 @@ exports.getAllTopics = async (req, res, next) => {
 exports.linkTopic = async (req, res, next) => {
   const { topic, commission } = req.body;
   try {
-    if (!topic || !commission) {
-      const error = new Error();
-      error.status = 400;
-      error.msg = "Missing Data";
-      throw error;
-    }
-    
+    if (!topic || !commission) throw missingDetailsError
+
     const commissionData = await prisma.commission.findUnique({
       where: {
         commission: commission,
@@ -96,17 +79,17 @@ exports.linkTopic = async (req, res, next) => {
     });
 
     const topicData = await prisma.topic.findUnique({
-        where: {
-            topic: topic
-        }
-    })
+      where: {
+        topic: topic,
+      },
+    });
 
     const topicCheck = await prisma.commissionTopics.findUnique({
       where: {
         topicId_commissionId: {
-            topicId: topicData.topic_id, // Replace with the actual topicId
-            commissionId: commissionData.commission_id, // Replace with the actual commissionId
-          },
+          topicId: topicData.topic_id, // Replace with the actual topicId
+          commissionId: commissionData.commission_id, // Replace with the actual commissionId
+        },
       },
     });
 
@@ -118,7 +101,10 @@ exports.linkTopic = async (req, res, next) => {
     }
 
     const link = await prisma.commissionTopics.create({
-      data: { topicId: topicData.topic_id, commissionId: commissionData.commission_id},
+      data: {
+        topicId: topicData.topic_id,
+        commissionId: commissionData.commission_id,
+      },
     });
 
     res.status(201).send({ link });
@@ -128,46 +114,36 @@ exports.linkTopic = async (req, res, next) => {
 };
 
 exports.deleteTopicLink = async (req, res, next) => {
-  try{
-    const {commission, topic} = req.body
+  try {
+    const { commission, topic } = req.body;
 
-    if(!commission || !topic){
-      const error = new Error();
-      error.status = 400
-      error.msg = 'Missing Data'
-      throw error
-    }
-    if(!isNaN(parseInt(commission)) || !isNaN(parseInt(topic))){
-      const error = new Error();
-      error.status = 400
-      error.msg = 'Incorrect Data Type'
-      throw error
-    }
+    if (!commission || !topic) throw missingDetailsError
+    if (!isNaN(parseInt(commission)) || !isNaN(parseInt(topic))) throw incorrectDataError
     const commissionData = await prisma.commission.findUnique({
       where: {
-        commission: commission
-      }
-    })
+        commission: commission,
+      },
+    });
     const topicData = await prisma.topic.findUnique({
       where: {
-        topic: topic
-      }
-    })
-    
+        topic: topic,
+      },
+    });
+
     const link = await prisma.commissionTopics.findUnique({
       where: {
         topicId_commissionId: {
           topicId: topicData.topic_id, // Replace with the actual topicId
           commissionId: commissionData.commission_id, // Replace with the actual commissionId
         },
-      }
-    })
+      },
+    });
 
-    if(!link){
+    if (!link) {
       const error = new Error();
-      error.status = 400
-      error.msg = 'Commission not linked with topic'
-      throw error
+      error.status = 400;
+      error.msg = "Commission not linked with topic";
+      throw error;
     }
 
     const deleteData = await prisma.commissionTopics.delete({
@@ -176,12 +152,11 @@ exports.deleteTopicLink = async (req, res, next) => {
           topicId: topicData.topic_id, // Replace with the actual topicId
           commissionId: commissionData.commission_id, // Replace with the actual commissionId
         },
-      }
-    })
+      },
+    });
 
-    res.status(204).send()
-
-  }catch(err){
-    next(err)
+    res.status(204).send();
+  } catch (err) {
+    next(err);
   }
-}
+};

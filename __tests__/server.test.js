@@ -42,7 +42,7 @@ describe("Post a new report to database", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe(
-          "Bad Request - Data Needed or Topic / Commission doesnt exist"
+          "Missing Data"
         );
       });
   });
@@ -163,9 +163,9 @@ describe("Gets commission by name", () => {
   test("404 - No commission", () => {
     return request(app)
       .get("/api/commission/banana")
-      .expect(404)
+      .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("No commission found");
+        expect(body.msg).toBe("Commission doesnt exist");
       });
   });
   test("404 - Incorrect Data type for commission", () => {
@@ -173,7 +173,7 @@ describe("Gets commission by name", () => {
       .get("/api/commission/1")
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Incorrect data type for commission");
+        expect(body.msg).toBe("Incorrect Data Type");
       });
   });
 });
@@ -298,7 +298,7 @@ describe("Get all commissions based on a user", () => {
       .get("/api/commission/user/banana")
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Invalid Data Type");
+        expect(body.msg).toBe("Incorrect Data Type");
       });
   });
 });
@@ -401,7 +401,7 @@ describe("Creating a new topic", () => {
       .post("/api/topics")
       .send(newTopic)
       .expect(({ body }) => {
-        expect(body.msg).toBe("Missing data");
+        expect(body.msg).toBe("Missing Data");
       });
   });
   test("400 - incorrect data type", () => {
@@ -414,7 +414,7 @@ describe("Creating a new topic", () => {
       .send(newTopic)
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Invalid Data Type");
+        expect(body.msg).toBe("Incorrect Data Type");
       });
   });
   test("400 - Topic already exists", () => {
@@ -745,6 +745,46 @@ describe('Adding a user to a commission', ()=>{
     .expect(400)
     .then(({body})=>{
       expect(body.msg).toBe('User doesnt exist')
+    })
+  })
+})
+
+describe('Delete an admin', ()=>{
+  test('204 - user is deleted', ()=>{
+    const data = {username: 'billy'}
+    return request(app)
+    .delete('/api/users')
+    .send(data)
+    .expect(204)
+  })
+  test('400 - User doesnt exist', ()=>{
+    const data = {username: 'number'}
+    return request(app)
+    .delete('/api/users')
+    .send(data)
+    .expect(400)
+    .then(({body})=>{
+      expect(body.msg).toBe('User doesnt exist')
+    })
+  })
+  test('400 - Missing Data', ()=>{
+    const data = {}
+    return request(app)
+    .delete('/api/users')
+    .send(data)
+    .expect(400)
+    .then(({body})=>{
+      expect(body.msg).toBe('Missing Data')
+    })
+  })
+  test('400 - Incorrect Data Type', ()=>{
+    const data = {username: 1}
+    return request(app)
+    .delete('/api/users')
+    .send(data)
+    .expect(400)
+    .then(({body})=>{
+      expect(body.msg).toBe('Incorrect Data Type')
     })
   })
 })

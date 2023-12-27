@@ -11,8 +11,10 @@ const seed = async () => {
   await prisma.$executeRaw`TRUNCATE TABLE "CommissionUser" RESTART IDENTITY CASCADE`;
   await prisma.$executeRaw`TRUNCATE TABLE "CommissionTopics" RESTART IDENTITY CASCADE`;
 
-  await prisma.users.create({
-    data: {username: 'scodia619', password: 'sha1$18970629$1$0aa11b7fa71125c6711eb31bde91524b9ec34418', isAdmin: true}
+  await prisma.users.createMany({
+    data: [{username: 'scodia619', password: 'sha1$18970629$1$0aa11b7fa71125c6711eb31bde91524b9ec34418', isAdmin: true},
+    {username: 'billy', password: 'sha1$18970629$1$0aa11b7fa71125c6711eb31bde91524b9ec34418', isAdmin: true}
+  ]
   })
 
   await prisma.topic.createMany({
