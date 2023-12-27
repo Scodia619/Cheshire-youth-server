@@ -95,7 +95,7 @@ exports.linkUserToCommission = async (req, res, next) => {
 
     if (commissionData.error) throw commissionData.error;
 
-    const user = getAllUsers(username);
+    const user = await getAllUsers(username);
 
     if (user.error) throw user.error;
 

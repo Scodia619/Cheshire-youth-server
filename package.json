@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "listen": "node listen"
+    "listen": "node listen",
+    "seed": "node ./prisma/seed.js"
   },
   "author": "",
   "license": "ISC",

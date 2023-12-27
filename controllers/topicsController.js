@@ -72,11 +72,7 @@ exports.linkTopic = async (req, res, next) => {
   try {
     if (!topic || !commission) throw missingDetailsError
 
-    const commissionData = await prisma.commission.findUnique({
-      where: {
-        commission: commission,
-      },
-    });
+    const commissionData = await getCommissionDetails(commission)
 
     const topicData = await prisma.topic.findUnique({
       where: {
@@ -119,11 +115,7 @@ exports.deleteTopicLink = async (req, res, next) => {
 
     if (!commission || !topic) throw missingDetailsError
     if (!isNaN(parseInt(commission)) || !isNaN(parseInt(topic))) throw incorrectDataError
-    const commissionData = await prisma.commission.findUnique({
-      where: {
-        commission: commission,
-      },
-    });
+    const commissionData = await getCommissionDetails(commission)
     const topicData = await prisma.topic.findUnique({
       where: {
         topic: topic,

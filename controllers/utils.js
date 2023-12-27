@@ -48,7 +48,6 @@ exports.getCommissionDetails = async (commission_name) => {
             username: username
         }
     })
-
     if(!user) throw noUserError
     return user
   }
