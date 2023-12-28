@@ -23,9 +23,11 @@ const seed = async () => {
       {
         topic: "relationships with the police",
         topic_description:
-          "How we can improve relations between the police and the public"
+          "How we can improve relations between the police and the public",
+          topic_img: 'https://i.ibb.co/j49FZ9L/savernake-knives-vw-I-e-Ms-2-Ms-unsplash.jpg'
       },
-      { topic: "knife crime", topic_description: "Talking about knife crime"},
+      { topic: "knife crime", topic_description: "Talking about knife crime",
+    topic_img: 'https://i.ibb.co/jgQHJSj/king-s-church-international-3mjspm-QDM-M-unsplash.jpg' },
     ],
   });
 
