@@ -30,6 +30,7 @@ model Topic {
   topic_id          Int       @id @default(autoincrement())
   topic             String    @unique
   topic_description String
+  topic_img         String?    @unique
   Reports           Reports[]
   topics CommissionTopics[]
 }
