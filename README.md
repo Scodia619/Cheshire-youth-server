@@ -68,42 +68,6 @@ If an error occurs, please ensure your have named/set up the .env files as state
 
     $ npm listen
 
-
-    Method requests (GET, PATCH, POST, DELETE) can now be performed at http://localhost:9090 using your API endpoint testing tool of choice i.e. postman, insomnia etc
-
-The available routes and methods can be found below
-Routes
-
-The server has the following 14 endpoints:
-
-    GET /api/topics which serves a list of topics
-
-    POST /api/topics adds a new topic to the database
-
-    GET /api/articles/:article_id, which responds with the article corresponding to the article_id passed in
-
-    POST /api/articles adds a new article to the topic in the post object
-
-    PATCH /api/articles/:article_id modifies the votes on the article in question
-
-    DELETE /api/articles/:article_id deletes the article selected by its id
-
-    POST /api/articles/:article_id/comments adds a new comment to the requested article
-
-    GET /api/articles/:article_id/comments gets all the comments belonging to the requested article
-
-    GET /api/articles gets all the articles in the database
-
-    GET /api/comments responds with all the comments in the database
-
-    GET /api/users responds with all the usernames in the database
-
-    GET /api/users:username responds the details of the username requested
-
-    DELETE /api/comments/:comment_id deletes the requested comment
-
-    GET /api serves a json object of the path above, with example responses
-
 Testing
 
 The tests created can be found in the: __tests__/server.test.js directory
