@@ -1,7 +1,8 @@
+const path = require('path')
 const express = require("express");
 const { customErrors, prismaErrors } = require("./errors");
 const apiRouter = require("./routes/apiRouter");
-const cors = require('cors')
+const cors = require("cors");
 
 const app = express();
 
@@ -10,7 +11,9 @@ app.use(cors());
 
 app.use("/api", apiRouter);
 
-  app.use(customErrors)
-  app.use(prismaErrors)
+app.use(customErrors);
+app.use(prismaErrors);
+
+app.set("views", path.join(__dirname, "../views"));
 
 module.exports = app;
