@@ -14,6 +14,4 @@ app.use("/api", apiRouter);
 app.use(customErrors);
 app.use(prismaErrors);
 
-app.set("views", path.join(__dirname, "../views"));
-
 module.exports = app;
